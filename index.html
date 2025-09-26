@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Zyrex Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -21,7 +21,8 @@ canvas {position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
 }
 .profile {display:flex;justify-content:center;margin-bottom:15px;}
 .profile video {
-  width:100px; height:100px; border-radius:50%; border:3px solid #0080ff; object-fit:cover;
+  width:100px;height:100px;border-radius:50%;object-fit:cover;
+  border:3px solid #0080ff;display:block;
 }
 button {
   width:95%;padding:10px;margin-top:10px;
@@ -33,11 +34,7 @@ button:hover { background:#3399ff; }
 footer {margin-top:15px;font-size:11px;opacity:0.6;}
 @keyframes fadeIn { from {opacity:0;transform:translateY(15px);} to {opacity:1;transform:translateY(0);} }
 
-/* Intro */
-#introCard h2 { font-size:16px; margin:15px 0; }
-
 /* Login */
-#loginCard {display:none;}
 #loginCard input {
   width:90%;padding:10px;margin:8px 0;border-radius:10px;border:none;
   outline:none;font-size:14px;text-align:center;
@@ -58,45 +55,73 @@ footer {margin-top:15px;font-size:11px;opacity:0.6;}
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* Sorry screen */
-#sorryCard {display:none;}
-.message-box {
-  background:rgba(200,200,200,0.15);
-  backdrop-filter:blur(10px);
-  padding:20px 25px;
-  border-radius:15px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.3);
-  max-width:320px;
-  animation:fadeIn 0.5s ease;
+/* Notification */
+#notification {
+  position:fixed;
+  bottom:-60px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.8);
+  color:#fff;
+  padding:12px 20px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  opacity:0;
+  transition:all 0.5s ease;
+  z-index:999;
 }
-.message-box h2 {
-  font-size:14px;color:#fff;margin:0;line-height:1.5;margin-bottom:15px;
+#notification.show {
+  bottom:30px;
+  opacity:1;
+}
+#notification.success { background:rgba(0,128,0,0.85); }
+#notification.error { background:rgba(200,0,0,0.85); }
+
+/* --- PANEL FITUR --- */
+#panelCard { display:none; }
+.card.fade-in { 
+  transform: translateY(20px);
+  opacity: 0;
+  animation:slideUp 0.48s cubic-bezier(.2,.9,.2,1) forwards;
+}
+@keyframes slideUp {
+  to { transform: translateY(0); opacity:1; }
+}
+#panelCard h2 { font-size:18px; margin:6px 0 12px; }
+#panelCard .buttons { display:flex;flex-direction:column;gap:10px; margin-top:8px; text-align:left; }
+.toggle-btn {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px;border-radius:12px;background:rgba(255,255,255,0.03);
+  font-weight:600;font-size:14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.switch { position:relative; display:inline-block; width:46px; height:26px; margin-left:12px; }
+.switch input { opacity:0; width:0; height:0; }
+.slider {
+  position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,0.15); transition:.25s; border-radius:26px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+}
+.slider:before {
+  position:absolute; content:""; height:18px; width:18px; left:4px; top:4px;
+  background:#fff; border-radius:50%; transition:.25s;
+}
+.switch input:checked + .slider { background:rgba(0,200,150,0.18); }
+.switch input:checked + .slider:before { transform:translateX(20px); }
+@media (max-width:420px){
+  .card { padding:18px; }
+  button { width:100%; }
 }
 </style>
 </head>
 <body>
 <canvas id="particles"></canvas>
 
-<!-- Intro card -->
-<div class="card" id="introCard">
-  <div class="profile">
-    <video autoplay muted loop playsinline>
-      <source src="profile.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
-  <h2>Ikuti Saluran Sebelum Menggunakan Panel</h2>
-  <button id="okBtn">OK</button>
-  <footer>© 2025 The Zyrex. All rights reserved.</footer>
-</div>
-
-<!-- Login Card -->
+<!-- Login Card langsung tampil -->
 <div class="card" id="loginCard">
   <div class="profile">
-    <video autoplay muted loop playsinline>
-      <source src="profile.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+    <video src="profile.mp4" autoplay muted loop playsinline></video>
   </div>
   <h2>Login Panel</h2>
   <input type="text" id="username" placeholder="Username">
@@ -105,17 +130,34 @@ footer {margin-top:15px;font-size:11px;opacity:0.6;}
   <div id="spinner"></div>
 </div>
 
-<!-- Sorry screen -->
-<div id="sorryCard">
-  <div class="message-box">
-    <h2>
-      Maaf, Durasi Panel Free Sudah Habis.<br>
-      Dapatkan Panel Permanen Dengan<br>
-      Klik Tombol Dibawah Ini 👇🏻
-    </h2>
-    <button onclick="window.location.href='https://whatsapp.com/channel/0029VaPhjdlAjPXT6MFkR60s'">Dapatkan</button>
+<!-- PANEL FITUR -->
+<div class="card fade-in" id="panelCard" style="display:none;">
+  <div class="profile">
+    <video src="profile.mp4" autoplay muted loop playsinline></video>
   </div>
+  <h2>Zyrex Panel</h2>
+  <div class="buttons">
+    <div class="toggle-btn">Aimbot
+      <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+    </div>
+    <div class="toggle-btn">Aim Body
+      <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+    </div>
+    <div class="toggle-btn">Magic Bullet
+      <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+    </div>
+    <div class="toggle-btn">Auto Aim AWM
+      <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+    </div>
+    <div class="toggle-btn">Hologram All Character
+      <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+    </div>
+  </div>
+  <footer>© 2025 The Zyrex. All rights reserved.</footer>
 </div>
+
+<!-- Notification -->
+<div id="notification"></div>
 
 <script>
 /* Particles */
@@ -153,17 +195,18 @@ function updateParticles(){
 function animate(){drawParticles();updateParticles();requestAnimationFrame(animate);}
 initParticles();animate();
 
-/* Intro → Login */
-document.getElementById("okBtn").addEventListener("click",()=>{
-  document.getElementById("introCard").style.display="none";
-  document.getElementById("loginCard").style.display="block";
+/* Notification */
+function showNotification(message,type){
+  const notif=document.getElementById("notification");
+  notif.textContent=message;
+  notif.className=""; 
+  notif.classList.add("show");
+  if(type==="success"){notif.classList.add("success");}
+  else if(type==="error"){notif.classList.add("error");}
+  setTimeout(()=>{notif.classList.remove("show");},2500);
+}
 
-  setTimeout(()=>{
-    window.location.href="https://whatsapp.com/channel/0029VaPhjdlAjPXT6MFkR60s";
-  },50);
-});
-
-/* Login → Cek Username & Password + Spinner */
+/* Login check */
 document.getElementById("loginBtn").addEventListener("click",()=>{
   const user=document.getElementById("username").value.trim();
   const pass=document.getElementById("password").value.trim();
@@ -177,10 +220,19 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
     document.getElementById("loginBtn").disabled = false;
 
     if(user==="zyrex" && pass==="free"){
-      document.getElementById("loginCard").style.display="none";
-      document.getElementById("sorryCard").style.display="block";
+      showNotification("Login Successfull ✅","success");
+
+      const loginCard = document.getElementById("loginCard");
+      const panel = document.getElementById("panelCard");
+
+      loginCard.style.display = "none";
+      panel.style.display = "block";
+
+      panel.classList.remove('fade-in');
+      void panel.offsetWidth;
+      panel.classList.add('fade-in');
     } else {
-      alert("Username atau password salah!");
+      showNotification("Login Failed ❌","error");
     }
   }, 1000);
 });
